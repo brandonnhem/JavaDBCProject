@@ -83,6 +83,10 @@ public class JDBCSampleSource {
                 System.out.print("Enter a menu option: ");
                 userChoice = in.nextInt();
                 if(userChoice == 1){
+                    /**
+                     * Displays all writing groups in database
+                     */
+                    
                     System.out.println("Selecting all writing groups...");
                     
                     stmt = conn.createStatement();
@@ -102,7 +106,12 @@ public class JDBCSampleSource {
                     
                 }
                 if(userChoice == 2){
-                    System.out.print("Which group would you like to see: ");
+                    /**
+                     * Has the user enter a specific group name
+                     * and then displays any groups and their
+                     * data if they are found in the database
+                     */
+                    System.out.print("Which group would you like to see: "); // asks users for a group name
                     String groupChoice = in2.nextLine();
                     
                     PreparedStatement q=conn.prepareStatement("SELECT * FROM writing_groups " 
@@ -110,9 +119,7 @@ public class JDBCSampleSource {
                                                             + "WHERE group_name=?");  
 
                     q.setString(1,groupChoice); 
-                    
-//                    System.out.println(groupChoice);
-                     
+                                         
                     rs = q.executeQuery();
                     
                     if(!rs.next()){
@@ -142,6 +149,10 @@ public class JDBCSampleSource {
                     }
                 }
                 if(userChoice == 3){
+                    /**
+                     * Displays all publishers
+                     */
+                    
                     System.out.println("Selecting all publishers...");
                     stmt = conn.createStatement();
                     
@@ -315,8 +326,7 @@ public class JDBCSampleSource {
                     deleteBook.setString(1,bookDelete);
                     deleteBook.execute();
                 }
-                if(userChoice == 10){ //We will change this one out to fit in the
-                                      //rest of the menu options
+                if(userChoice == 10){
                     System.out.println("Quitting...");
                     rs.close();
                     stmt.close();
