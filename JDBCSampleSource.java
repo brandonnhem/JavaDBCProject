@@ -90,15 +90,18 @@ public class JDBCSampleSource {
                     
                     sql = "SELECT group_name FROM writing_groups";
                     rs = stmt.executeQuery(sql);
-                    
-                    System.out.printf(oneDisplayFormat, "Group Name"); // OOF
-                    while(rs.next()){
-                        String group = rs.getString("group_name");
-                        System.out.printf(oneDisplayFormat, dispNull(group));                    
+                    if (!rs.next()){
+                        System.out.println("Writing groups table in database empty");
+                    } else {
+                        System.out.printf(oneDisplayFormat, "Group Name");
+                        while(rs.next()){
+                            String group = rs.getString("group_name");
+                            System.out.printf(oneDisplayFormat, dispNull(group));                    
+                        }
                     }
                     
                 }
-                if(userChoice == 2){ //bad output
+                if(userChoice == 2){
                     System.out.print("Which group would you like to see: ");
                     String groupChoice = in2.nextLine();
                     
@@ -108,30 +111,34 @@ public class JDBCSampleSource {
 
                     q.setString(1,groupChoice); 
                     
-                    System.out.println(groupChoice);
+//                    System.out.println(groupChoice);
                      
                     rs = q.executeQuery();
-                                        
-                    System.out.printf(elevendisplay, "Publisher Name", "Group Name", 
-                    "Head Writer", "Year Formed", "Subject", "Book Title", "Year Published", 
-                    "Number Pages", "Publisher Address", "Publisher Phone", "Publisher Email");
-                    while(rs.next()){
-                        String pubname = rs.getString("publisher_name");
-                        String group = rs.getString("group_name");
-                        String head = rs.getString("head_writer");
-                        String year = rs.getString("year_formed");
-                        String subject = rs.getString("subject");
-                        String book_title = rs.getString("book_title");
-                        String year_pub = rs.getString("year_published");
-                        String num_page = rs.getString("number_pages");
-                        String pub_add = rs.getString("publisher_address");
-                        String pub_phone = rs.getString("publisher_phone");
-                        String pub_email = rs.getString("publisher_email");
-                        System.out.printf(elevendisplay,
-                                        dispNull(pubname), dispNull(group), dispNull(head), 
-                                        dispNull(year), dispNull(subject), dispNull(book_title),
-                                        dispNull(year_pub), dispNull(num_page), dispNull(pub_add),
-                                        dispNull(pub_phone), dispNull(pub_email));
+                    
+                    if(!rs.next()){
+                        System.out.println(groupChoice + " not found in database");
+                    } else {                 
+                        System.out.printf(elevendisplay, "Publisher Name", "Group Name", 
+                        "Head Writer", "Year Formed", "Subject", "Book Title", "Year Published", 
+                        "Number Pages", "Publisher Address", "Publisher Phone", "Publisher Email");
+                        while(rs.next()){
+                            String pubname = rs.getString("publisher_name");
+                            String group = rs.getString("group_name");
+                            String head = rs.getString("head_writer");
+                            String year = rs.getString("year_formed");
+                            String subject = rs.getString("subject");
+                            String book_title = rs.getString("book_title");
+                            String year_pub = rs.getString("year_published");
+                            String num_page = rs.getString("number_pages");
+                            String pub_add = rs.getString("publisher_address");
+                            String pub_phone = rs.getString("publisher_phone");
+                            String pub_email = rs.getString("publisher_email");
+                            System.out.printf(elevendisplay,
+                                            dispNull(pubname), dispNull(group), dispNull(head), 
+                                            dispNull(year), dispNull(subject), dispNull(book_title),
+                                            dispNull(year_pub), dispNull(num_page), dispNull(pub_add),
+                                            dispNull(pub_phone), dispNull(pub_email));
+                        }
                     }
                 }
                 if(userChoice == 3){
@@ -142,11 +149,15 @@ public class JDBCSampleSource {
                     sql = "SELECT publisher_name FROM publishers";
                     rs = stmt.executeQuery(sql);
                     
-                    System.out.printf(oneDisplayFormat, "Publisher Name");
-                    while(rs.next()){
-                        String pub_name = rs.getString("publisher_name");
-                        System.out.printf(oneDisplayFormat,
-                        dispNull(pub_name));                    
+                    if(!rs.next()){
+                        System.out.println("Publishers table empty in database");
+                    } else {
+                        System.out.printf(oneDisplayFormat, "Publisher Name");
+                        while(rs.next()){
+                            String pub_name = rs.getString("publisher_name");
+                            System.out.printf(oneDisplayFormat,
+                            dispNull(pub_name));                    
+                        }
                     }
                 }
                 if(userChoice == 4){
