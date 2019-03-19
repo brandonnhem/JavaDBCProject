@@ -280,13 +280,16 @@ public class JDBCSampleSource {
                         in2.next();
                         System.out.print("Please only enter a number: ");
                     }
+
                     int yearPublished = in2.nextInt();
+                    in2.nextLine();
 
                     while (yearPublished > 2019 || yearPublished <= 0)
                     {
                         System.out.println("That is an invalid year try again ");
                         System.out.print("Please enter the year that the book was published: ");
                         yearPublished = in2.nextInt();
+                        in2.nextLine();
                     }
 
                     System.out.print("Please enter the number of pages the book has: ");
@@ -296,11 +299,13 @@ public class JDBCSampleSource {
                         System.out.print("Please only enter a number: ");
                     }
                     int numberPages = in2.nextInt();
+                    in2.nextLine();
                     
                     while (numberPages < 0){
                         System.out.println("That is an invalid number of pages");
                         System.out.print("Please enter the number of pages: ");
                         numberPages = in2.nextInt();
+                        in2.nextLine();
                     }
                     
                     String query;
@@ -494,6 +499,9 @@ public class JDBCSampleSource {
                 }
                 if(userChoice == 10){
                     System.out.println("Quitting...");
+                    in.close();
+                    in2.close();
+//                    in3.close();
                     rs.close();
                     stmt.close();
                     conn.close();
@@ -528,4 +536,3 @@ public class JDBCSampleSource {
         System.out.println("Goodbye!");
     }//end main
 }//end FirstExample}
-
