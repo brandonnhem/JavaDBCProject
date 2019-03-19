@@ -4,7 +4,10 @@ import java.util.InputMismatchException;
 
 /**
  *
- * @author Mimi Opkins with some tweaking from Dave Brown
+ * @authors:
+ *        Brandon Nhem
+ *        Oscar Gepiga
+ *        Alyssa Cervantes
  */
 public class JDBCSampleSource {
     //  Database credentials
