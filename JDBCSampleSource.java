@@ -468,6 +468,22 @@ public class JDBCSampleSource {
                     deleteBook.setString(1,bookDelete);
                     deleteBook.setString(2, groupDelete);
                     deleteBook.execute();
+                    
+                    System.out.println("Selecting all book titles...");
+
+                    stmt = conn.createStatement();
+                    String sql;
+                    sql = "SELECT book_title FROM books";
+                    rs = stmt.executeQuery(sql);
+                    System.out.printf(oneDisplayFormat, "Book Title");
+
+                    while (rs.next()) {
+                        String title = rs.getString("book_title");
+                //Display values
+                        System.out.printf(oneDisplayFormat,
+                        dispNull(title));
+                    }
+                    
                     rs1.close();
                 }
                 if(userChoice == 10){
