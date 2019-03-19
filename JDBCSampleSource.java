@@ -19,7 +19,7 @@ public class JDBCSampleSource {
     //strings, but that won't always be the case.
     static final String displayFormat="%-5s%-15s%-15s%-15s\n";
     static final String oneDisplayFormat="%-15s\n";
-    static final String elevendisplay="%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n";
+    static final String elevendisplay="%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s\n";
 
 
 // JDBC driver name and database URL
