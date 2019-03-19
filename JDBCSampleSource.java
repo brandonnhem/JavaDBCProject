@@ -19,7 +19,6 @@ public class JDBCSampleSource {
     //strings, but that won't always be the case.
     static final String displayFormat="%-5s%-15s%-15s%-15s\n";
     static final String oneDisplayFormat="%-15s\n";
-    static final String fourDisplayFormat="%-15s%-15s%-15s%-15s\n";
     static final String elevendisplay="%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n";
 
 
@@ -65,9 +64,7 @@ public class JDBCSampleSource {
             //STEP 3: Open a connection
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(DB_URL);
-            
-//            int userChoice;
-                        
+                                    
             while(end == 0){
                 System.out.println("---\tMENU\t---");
                 System.out.println("1.\tSelect all writing groups");
@@ -107,10 +104,10 @@ public class JDBCSampleSource {
                         System.out.println("Writing groups table in database empty");
                     } else {
                         System.out.printf(oneDisplayFormat, "Group Name");
-                        while(rs.next()){
+                        do {
                             String group = rs.getString("group_name");
-                            System.out.printf(oneDisplayFormat, dispNull(group));                    
-                        }
+                            System.out.printf(oneDisplayFormat, dispNull(group));   
+                        } while(rs.next());
                     }
 
                 }
@@ -137,7 +134,7 @@ public class JDBCSampleSource {
                         System.out.printf(elevendisplay, "Publisher Name", "Group Name", 
                         "Head Writer", "Year Formed", "Subject", "Book Title", "Year Published", 
                         "Number Pages", "Publisher Address", "Publisher Phone", "Publisher Email");
-                        while(rs.next()){
+                        do {
                             String pubname = rs.getString("publisher_name");
                             String group = rs.getString("group_name");
                             String head = rs.getString("head_writer");
@@ -154,7 +151,7 @@ public class JDBCSampleSource {
                                             dispNull(year), dispNull(subject), dispNull(book_title),
                                             dispNull(year_pub), dispNull(num_page), dispNull(pub_add),
                                             dispNull(pub_phone), dispNull(pub_email));
-                        }
+                        } while(rs.next());
                     }
                 }
                 if(userChoice == 3){
@@ -173,15 +170,15 @@ public class JDBCSampleSource {
                         System.out.println("Publishers table empty in database");
                     } else {
                         System.out.printf(oneDisplayFormat, "Publisher Name");
-                        while(rs.next()){
+                        do {
                             String pub_name = rs.getString("publisher_name");
                             System.out.printf(oneDisplayFormat,
                             dispNull(pub_name));                    
-                        }
+                        } while(rs.next());
                     }
                 }
                 if(userChoice == 4){
-                    System.out.println("Which publisher would you like to see: ");
+                    System.out.print("Which publisher would you like to see: ");
                     String publisherPicked = in2.nextLine();
 
 
@@ -195,7 +192,7 @@ public class JDBCSampleSource {
                         System.out.println("The publisher "+ publisherPicked +" does not exist." );
                     } else {
                         System.out.printf(elevendisplay, "Book Title", "Pages", "Year Published", "Publisher","Publisher Adress","Publisher phone","Publisher Email","Group","Head Writer","Year formed", "Subject");
-                        while (rs.next()) {
+                        do {
                             String title = rs.getString("book_title");
                             String np = rs.getString("number_pages");
                             String yp = rs.getString("year_published");
@@ -210,7 +207,7 @@ public class JDBCSampleSource {
 
                             System.out.printf(elevendisplay,
                             dispNull(title),dispNull(np),dispNull(yp),dispNull(p),dispNull(pa),dispNull(pp),dispNull(pe),dispNull(g),dispNull(hw),dispNull(y),dispNull(s));
-                        }
+                        } while(rs.next());
                     }
                 }  
                 if(userChoice == 5){
@@ -222,12 +219,12 @@ public class JDBCSampleSource {
                     rs = stmt.executeQuery(sql);
                     System.out.printf(oneDisplayFormat, "Book Title");
 
-                     while (rs.next()) {
-                      String title = rs.getString("book_title");
+                    while (rs.next()) {
+                        String title = rs.getString("book_title");
                 //Display values
                         System.out.printf(oneDisplayFormat,
                         dispNull(title));
-                     } 
+                    } 
                 }
                 if(userChoice == 6){
                     System.out.print("For the book you would to see\nWhat is the title: ");
@@ -269,11 +266,7 @@ public class JDBCSampleSource {
                 }
                if (userChoice == 7) // USER ADD NEW BOOK 
                 {
-                    // FIX ME: Figure out how to distinguish whether the user
-                    // entered a wrong group or publisher
-                    // This function needs a group_name and publisher_name that is already in the system
                     String groupName, bookTitle, publisherName;
-//                    int numberPages, yearPublished;
 
                     System.out.print("Please enter the Book's group name: ");
                     groupName = in2.nextLine();
@@ -282,7 +275,6 @@ public class JDBCSampleSource {
                     System.out.print("Please enter the Book's publisher's name: ");
                     publisherName = in2.nextLine();
                     System.out.print("Please enter the year that the book was published: ");
-//                    yearPublished = in2.nextInt();
                     
                     while(!in2.hasNextInt()){
                         in2.next();
@@ -298,7 +290,6 @@ public class JDBCSampleSource {
                     }
 
                     System.out.print("Please enter the number of pages the book has: ");
-//                    int numberPages = in2.nextInt();
                     
                     while(!in2.hasNextInt()){
                         in2.next();
@@ -379,7 +370,7 @@ public class JDBCSampleSource {
                     {
                         // While the old publisher doesn't exist have the user
                         // enter old publishers until one exists
-                        System.out.println("The old publisher you entered does not exist in our database");
+                        System.out.println("The old publisher, " + oldPublisher+ ", does not exist in our database");
                         System.out.print("Enter the old publisher: ");
                         oldPublisher = in2.nextLine();
                         findOld.setString(1, oldPublisher);
@@ -388,7 +379,7 @@ public class JDBCSampleSource {
 
                     while(rs2.next()) // if the new publisher already exists
                     {
-                        System.out.println("The new publisher you enetered already exist ");
+                        System.out.println("The new publisher, " + newPublisher + ", already exists");
                         System.out.print("Enter the new publisher: ");
                         newPublisher = in2.nextLine();
                         findNew.setString(1, newPublisher);
@@ -404,11 +395,8 @@ public class JDBCSampleSource {
                     System.out.println("");
                     
                     // Display all new books where publisher is changed
-                    // TRYING TO GET THIS ONE TO WORK - Brandon
                     stmt = conn.createStatement();
                     String sql;
-//                    sql =  "SELECT * FROM books";
-//                    sql += "WHERE publisher_name ='" + newPublisher + "'";
                     
                     sql = "SELECT * FROM publishers NATURAL JOIN books NATURAL JOIN writing_groups WHERE publisher_name = '" + newPublisher + "'"; 
                     
