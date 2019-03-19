@@ -19,7 +19,7 @@ public class JDBCSampleSource {
     //strings, but that won't always be the case.
     static final String displayFormat="%-5s%-15s%-15s%-15s\n";
     static final String oneDisplayFormat="%-15s\n";
-    static final String elevendisplay="%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s%-25s\n";
+    static final String elevendisplay="%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n";
 
 
 // JDBC driver name and database URL
@@ -117,7 +117,7 @@ public class JDBCSampleSource {
                      * and then displays any groups and their
                      * data if they are found in the database
                      */
-                    System.out.println("Which group would you like to see: "); // asks users for a group name
+                    System.out.print("Which group would you like to see: "); // asks users for a group name
                     String groupChoice = in2.nextLine();
 
                     PreparedStatement q=conn.prepareStatement("SELECT * FROM writing_groups " 
@@ -227,9 +227,9 @@ public class JDBCSampleSource {
                     } 
                 }
                 if(userChoice == 6){
-                    System.out.println("For the book you would to see\nWhat is the title: ");
+                    System.out.print("For the book you would to see\nWhat is the title: ");
                     String bookPicked = in2.nextLine();
-                    System.out.println("What is the name of the writing group: ");
+                    System.out.print("What is the name of the writing group: ");
                     String bookGroup = in2.nextLine();
 
                     PreparedStatement q=conn.prepareStatement("SELECT * FROM books NATURAL "
@@ -268,34 +268,40 @@ public class JDBCSampleSource {
                 {
                     String groupName, bookTitle, publisherName;
 
-                    System.out.println("Please enter the Book's group name: ");
+                    System.out.print("Please enter the Book's group name: ");
                     groupName = in2.nextLine();
-                    System.out.println("Please enter the Book's title: ");
+                    System.out.print("Please enter the Book's title: ");
                     bookTitle = in2.nextLine();
-                    System.out.println("Please enter the Book's publisher's name: ");
+                    System.out.print("Please enter the Book's publisher's name: ");
                     publisherName = in2.nextLine();
-                    System.out.println("Please enter the year that the book was published: ");
+                    System.out.print("Please enter the year that the book was published: ");
                     
                     while(!in2.hasNextInt()){
                         in2.next();
-                        System.out.println("Please only enter a number: ");
+                        System.out.print("Please only enter a number: ");
                     }
                     int yearPublished = in2.nextInt();
 
                     while (yearPublished > 2019 || yearPublished <= 0)
                     {
                         System.out.println("That is an invalid year try again ");
-                        System.out.println("Please enter the year that the book was published: ");
+                        System.out.print("Please enter the year that the book was published: ");
                         yearPublished = in2.nextInt();
                     }
 
-                    System.out.println("Please enter the number of pages the book has: ");
+                    System.out.print("Please enter the number of pages the book has: ");
                     
                     while(!in2.hasNextInt()){
                         in2.next();
-                        System.out.println("Please only enter a number: ");
+                        System.out.print("Please only enter a number: ");
                     }
                     int numberPages = in2.nextInt();
+                    
+                    while (numberPages < 0){
+                        System.out.println("That is an invalid number of pages");
+                        System.out.print("Please enter the number of pages: ");
+                        numberPages = in2.nextInt();
+                    }
                     
                     String query;
                     query = "Insert into books (group_name, book_title, publisher_name, year_published, number_pages)"
@@ -315,7 +321,7 @@ public class JDBCSampleSource {
                     while(!rs1.next()) // while the group doesnt exist
                     {
                         System.out.println("That writing group doesn't exist");
-                        System.out.println("Reenter the Book's Group Name: ");
+                        System.out.print("Reenter the Book's Group Name: ");
                         groupName = in2.nextLine();
                         findGroup.setString(1, groupName);
                         rs1 = findGroup.executeQuery();
@@ -324,7 +330,7 @@ public class JDBCSampleSource {
                     while(!rs2.next()) // while the publisher doesnt exist
                     {
                         System.out.println("That publisher doesn't exist");
-                        System.out.println("Reenter the Publisher Name: ");
+                        System.out.print("Reenter the Publisher Name: ");
                         publisherName = in2.nextLine();
                         findPublish.setString(1, publisherName);
                         rs2 = findPublish.executeQuery();
@@ -344,10 +350,10 @@ public class JDBCSampleSource {
                 }
                 if (userChoice == 8) // USER ADD NEW PUBLISH
                 {
-                    System.out.println("Enter the name of the new publisher: ");
+                    System.out.print("Enter the name of the new publisher: ");
                     String newPublisher = in2.nextLine();
 
-                    System.out.println("Enter the name of the old publisher: ");
+                    System.out.print("Enter the name of the old publisher: ");
                     String oldPublisher = in2.nextLine();
 
                     String query = "Insert into publishers (publisher_name) values(?)"; 
@@ -371,7 +377,7 @@ public class JDBCSampleSource {
                         // While the old publisher doesn't exist have the user
                         // enter old publishers until one exists
                         System.out.println("The old publisher, " + oldPublisher+ ", does not exist in our database");
-                        System.out.println("Enter the old publisher: ");
+                        System.out.print("Enter the old publisher: ");
                         oldPublisher = in2.nextLine();
                         findOld.setString(1, oldPublisher);
                         rs1 = findOld.executeQuery();
@@ -380,7 +386,7 @@ public class JDBCSampleSource {
                     while(rs2.next()) // if the new publisher already exists
                     {
                         System.out.println("The new publisher, " + newPublisher + ", already exists");
-                        System.out.println("Enter the new publisher: ");
+                        System.out.print("Enter the new publisher: ");
                         newPublisher = in2.nextLine();
                         findNew.setString(1, newPublisher);
                         rs2 = findNew.executeQuery();
@@ -434,10 +440,10 @@ public class JDBCSampleSource {
                 }
                 if (userChoice == 9) // USER REMOVE BOOK
                 {
-                    System.out.println("Enter the book you want to delete: ");
+                    System.out.print("Enter the book's title you want to delete: ");
                     String bookDelete = in2.nextLine();
 
-                    System.out.println("Enter the book's group name: ");
+                    System.out.print("Enter the book's group name: ");
                     String groupDelete = in2.nextLine();
 
                     String query = "delete from books where book_title = ? and group_name = ?";
