@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 /**
  *
@@ -18,6 +19,7 @@ public class JDBCSampleSource {
     //strings, but that won't always be the case.
     static final String displayFormat="%-5s%-15s%-15s%-15s\n";
     static final String oneDisplayFormat="%-15s\n";
+    static final String fourDisplayFormat="%-15s%-15s%-15s%-15s\n";
     static final String elevendisplay="%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n";
 
 
@@ -64,7 +66,7 @@ public class JDBCSampleSource {
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(DB_URL);
             
-            int userChoice;
+//            int userChoice;
                         
             while(end == 0){
                 System.out.println("---\tMENU\t---");
@@ -81,17 +83,24 @@ public class JDBCSampleSource {
                 System.out.println("10.\tQuit");
 
                 System.out.print("Enter a menu option: ");
-                userChoice = in.nextInt();
+                
+                while(!in.hasNextInt()){
+                    in.next();
+                    System.out.print("Enter a VALID menu option (1-10): ");
+                }               
+                int userChoice = in.nextInt();
+
+                
                 if(userChoice == 1){
                     /**
                      * Displays all writing groups in database
                      */
-                    
+
                     System.out.println("Selecting all writing groups...");
-                    
+
                     stmt = conn.createStatement();
                     String sql;
-                    
+
                     sql = "SELECT group_name FROM writing_groups";
                     rs = stmt.executeQuery(sql);
                     if (!rs.next()){
@@ -103,7 +112,7 @@ public class JDBCSampleSource {
                             System.out.printf(oneDisplayFormat, dispNull(group));                    
                         }
                     }
-                    
+
                 }
                 if(userChoice == 2){
                     /**
@@ -113,15 +122,15 @@ public class JDBCSampleSource {
                      */
                     System.out.print("Which group would you like to see: "); // asks users for a group name
                     String groupChoice = in2.nextLine();
-                    
+
                     PreparedStatement q=conn.prepareStatement("SELECT * FROM writing_groups " 
                                                             + "NATURAL JOIN books NATURAL JOIN publishers "
                                                             + "WHERE group_name=?");  
 
                     q.setString(1,groupChoice); 
-                                         
+
                     rs = q.executeQuery();
-                    
+
                     if(!rs.next()){
                         System.out.println(groupChoice + " not found in database");
                     } else {                 
@@ -152,14 +161,14 @@ public class JDBCSampleSource {
                     /**
                      * Displays all publishers
                      */
-                    
+
                     System.out.println("Selecting all publishers...");
                     stmt = conn.createStatement();
-                    
+
                     String sql;
                     sql = "SELECT publisher_name FROM publishers";
                     rs = stmt.executeQuery(sql);
-                    
+
                     if(!rs.next()){
                         System.out.println("Publishers table empty in database");
                     } else {
@@ -173,35 +182,37 @@ public class JDBCSampleSource {
                 }
                 if(userChoice == 4){
                     System.out.println("Which publisher would you like to see: ");
-
                     String publisherPicked = in2.nextLine();
 
+
                     PreparedStatement q=conn.prepareStatement("SELECT * FROM publishers "
-                             + "NATURAL JOIN books NATURAL JOIN writing_groups WHERE publisher_name=?");
-                     
-                     q.setString(1,publisherPicked);  
-                     rs = q.executeQuery();
+                             + "NATURAL JOIN books NATURAL JOIN writing_groups WHERE publisher_name=?"); 
 
-                    System.out.printf(elevendisplay, "Book Title", "Pages", "Year Published", 
-                            "Publisher","Publisher Adress","Publisher phone","Publisher Email",
-                            "Group","Head Writer","Year formed", "Subject");
+                    q.setString(1,publisherPicked);  
+                    rs = q.executeQuery();
 
-                     while (rs.next()) {
-                      String title = rs.getString("book_title");
-                      String np = rs.getString("number_pages");
-                      String yp = rs.getString("year_published");
-                      String p = rs.getString("publisher_name");
-                      String pa = rs.getString("publisher_address");
-                      String pp = rs.getString("publisher_phone");
-                      String pe = rs.getString("publisher_email");
-                      String g = rs.getString("group_name");
-                      String hw = rs.getString("head_writer");
-                      String y = rs.getString("year_formed");
-                      String s = rs.getString("subject");
-                      System.out.printf(elevendisplay,
-                        dispNull(title),dispNull(np),dispNull(yp),dispNull(p),dispNull(pa),dispNull(pp),dispNull(pe),dispNull(g),dispNull(hw),dispNull(y),dispNull(s));
-                     }
-                }
+                    if (rs.next() == false){
+                        System.out.println("The publisher "+ publisherPicked +" does not exist." );
+                    } else {
+                        System.out.printf(elevendisplay, "Book Title", "Pages", "Year Published", "Publisher","Publisher Adress","Publisher phone","Publisher Email","Group","Head Writer","Year formed", "Subject");
+                        while (rs.next()) {
+                            String title = rs.getString("book_title");
+                            String np = rs.getString("number_pages");
+                            String yp = rs.getString("year_published");
+                            String p = rs.getString("publisher_name");
+                            String pa = rs.getString("publisher_address");
+                            String pp = rs.getString("publisher_phone");
+                            String pe = rs.getString("publisher_email");
+                            String g = rs.getString("group_name");
+                            String hw = rs.getString("head_writer");
+                            String y = rs.getString("year_formed");
+                            String s = rs.getString("subject");
+
+                            System.out.printf(elevendisplay,
+                            dispNull(title),dispNull(np),dispNull(yp),dispNull(p),dispNull(pa),dispNull(pp),dispNull(pe),dispNull(g),dispNull(hw),dispNull(y),dispNull(s));
+                        }
+                    }
+                }  
                 if(userChoice == 5){
                     System.out.println("Selecting all book titles...");
 
@@ -219,112 +230,257 @@ public class JDBCSampleSource {
                      } 
                 }
                 if(userChoice == 6){
-                    System.out.println("For the book you would to see\n What is the title: ");
+                    System.out.print("For the book you would to see\nWhat is the title: ");
                     String bookPicked = in2.nextLine();
-                    System.out.println("What is the name of the writing group: ");
+                    System.out.print("What is the name of the writing group: ");
                     String bookGroup = in2.nextLine();
-                     
-                     PreparedStatement q=conn.prepareStatement("SELECT * FROM books NATURAL "
-                             + "JOIN publishers NATURAL JOIN writing_groups WHERE book_title=? and group_name =?");  
-                     q.setString(1,bookPicked);  
-                     q.setString(2,bookGroup);
-                     
+
+                    PreparedStatement q=conn.prepareStatement("SELECT * FROM books NATURAL "
+                            + "JOIN publishers NATURAL JOIN writing_groups WHERE book_title=? and group_name =?");  
+                    q.setString(1,bookPicked);  
+                    q.setString(2,bookGroup);
+                    
                     rs = q.executeQuery();
-                                        
-                    System.out.printf(elevendisplay, "Publisher Name", "Group Name", 
-                    "Head Writer", "Year Formed", "Subject", "Book Title", "Year Published", 
-                    "Number Pages", "Publisher Address", "Publisher Phone", "Publisher Email");
-                    while(rs.next()){
-                        String pubname = rs.getString("publisher_name");
-                        String group = rs.getString("group_name");
-                        String head = rs.getString("head_writer");
-                        String year = rs.getString("year_formed");
-                        String subject = rs.getString("subject");
-                        String book_title = rs.getString("book_title");
-                        String year_pub = rs.getString("year_published");
-                        String num_page = rs.getString("number_pages");
-                        String pub_add = rs.getString("publisher_address");
-                        String pub_phone = rs.getString("publisher_phone");
-                        String pub_email = rs.getString("publisher_email");
-                        System.out.printf(elevendisplay,
-                                        dispNull(pubname), dispNull(group), dispNull(head), 
-                                        dispNull(year), dispNull(subject), dispNull(book_title),
-                                        dispNull(year_pub), dispNull(num_page), dispNull(pub_add),
-                                        dispNull(pub_phone), dispNull(pub_email));
+                    if (!rs.next()){
+                        System.out.println("The book "+ bookPicked +" with the group "+ bookGroup + " does not exist." );
+                    } else {
+                        System.out.printf(elevendisplay, "Publisher Name", "Group Name", 
+                        "Head Writer", "Year Formed", "Subject", "Book Title", "Year Published", 
+                        "Number Pages", "Publisher Address", "Publisher Phone", "Publisher Email");
+                        do {
+                            String pubname = rs.getString("publisher_name");
+                            String group = rs.getString("group_name");
+                            String head = rs.getString("head_writer");
+                            String year = rs.getString("year_formed");
+                            String subject = rs.getString("subject");
+                            String book_title = rs.getString("book_title");
+                            String year_pub = rs.getString("year_published");
+                            String num_page = rs.getString("number_pages");
+                            String pub_add = rs.getString("publisher_address");
+                            String pub_phone = rs.getString("publisher_phone");
+                            String pub_email = rs.getString("publisher_email");
+                            System.out.printf(elevendisplay,
+                                            dispNull(pubname), dispNull(group), dispNull(head), 
+                                            dispNull(year), dispNull(subject), dispNull(book_title),
+                                            dispNull(year_pub), dispNull(num_page), dispNull(pub_add),
+                                            dispNull(pub_phone), dispNull(pub_email));
+                        } while (rs.next());
                     }
                 }
-                if (userChoice == 7) // USER ADD NEW BOOK 
+               if (userChoice == 7) // USER ADD NEW BOOK 
                 {
-                    // FIX ME: ask prof how to add object in database with a foriegn constraint
+                    // FIX ME: Figure out how to distinguish whether the user
+                    // entered a wrong group or publisher
                     // This function needs a group_name and publisher_name that is already in the system
                     String groupName, bookTitle, publisherName;
-                    int numberPages, yearPublished;
+//                    int numberPages, yearPublished;
 
-                    System.out.println("Please enter the Book's group name: ");
+                    System.out.print("Please enter the Book's group name: ");
                     groupName = in2.nextLine();
-
-                    System.out.println("Please enter the Book's title: ");
+                    System.out.print("Please enter the Book's title: ");
                     bookTitle = in2.nextLine();
-
-                    System.out.println("Please enter the Book's publisher's name: ");
+                    System.out.print("Please enter the Book's publisher's name: ");
                     publisherName = in2.nextLine();
+                    System.out.print("Please enter the year that the book was published: ");
+//                    yearPublished = in2.nextInt();
+                    
+                    while(!in2.hasNextInt()){
+                        in2.next();
+                        System.out.print("Please only enter a number: ");
+                    }
+                    int yearPublished = in2.nextInt();
 
-                    System.out.println("Please enter the year that the book was published: ");
-                    yearPublished = in2.nextInt();
+                    while (yearPublished > 2019 || yearPublished <= 0)
+                    {
+                        System.out.println("That is an invalid year try again ");
+                        System.out.print("Please enter the year that the book was published: ");
+                        yearPublished = in2.nextInt();
+                    }
 
-                    System.out.println("Please enter the number of pages the book has: ");
-                    numberPages = in2.nextInt();
-
+                    System.out.print("Please enter the number of pages the book has: ");
+//                    int numberPages = in2.nextInt();
+                    
+                    while(!in2.hasNextInt()){
+                        in2.next();
+                        System.out.print("Please only enter a number: ");
+                    }
+                    int numberPages = in2.nextInt();
+                    
                     String query;
                     query = "Insert into books (group_name, book_title, publisher_name, year_published, number_pages)"
-                            + "values(?,?,?,?,?)";
+                                + "values(?,?,?,?,?)";   
+                    String query1 = "Select * from writing_groups where group_name = ? ";
+                    String query2 = "Select * from publishers where publisher_name = ? ";
 
-                    PreparedStatement newBook = conn.prepareStatement(query);
-                    newBook.setString(1, groupName);
-                    newBook.setString(2,bookTitle);
-                    newBook.setString(3, publisherName);
-                    newBook.setInt(4, yearPublished);
-                    newBook.setInt(5,numberPages);
+                    PreparedStatement findGroup = conn.prepareStatement(query1);
+                    PreparedStatement findPublish = conn.prepareStatement(query2);
 
-                    newBook.execute();
+                    findGroup.setString(1, groupName);
+                    findPublish.setString(1, publisherName);
 
-                }
-                if (userChoice == 8) { // USER ADD NEW PUBLISH 
-                    // oldPublisher has to be an existing publisher
+                    ResultSet rs1 = findGroup.executeQuery();
+                    ResultSet rs2 = findPublish.executeQuery();
 
-                    System.out.println("Enter the name of the new publisher: ");
-                    String newPublisher = in2.nextLine();
+                    while(!rs1.next()) // while the group doesnt exist
+                    {
+                        System.out.println("That writing group doesn't exist");
+                        System.out.print("Reenter the Book's Group Name: ");
+                        groupName = in2.nextLine();
+                        findGroup.setString(1, groupName);
+                        rs1 = findGroup.executeQuery();
+                    }
+
+                    while(!rs2.next()) // while the publisher doesnt exist
+                    {
+                        System.out.println("That publisher doesn't exist");
+                        System.out.print("Reenter the Publisher Name: ");
+                        publisherName = in2.nextLine();
+                        findPublish.setString(1, publisherName);
+                        rs2 = findPublish.executeQuery();
+                    }
                     
-                    System.out.println("Enter the name of the old publisher: ");
+                    try{
+                            PreparedStatement newBook = conn.prepareStatement(query);
+                            newBook.setString(1, groupName);
+                            newBook.setString(2,bookTitle);
+                            newBook.setString(3, publisherName);
+                            newBook.setInt(4, yearPublished);
+                            newBook.setInt(5,numberPages);
+                            newBook.execute();
+                        }catch(SQLIntegrityConstraintViolationException e){
+                            System.out.println("This book already exists in our system");
+                        }
+                }
+                if (userChoice == 8) // USER ADD NEW PUBLISH
+                {
+                    System.out.print("Enter the name of the new publisher: ");
+                    String newPublisher = in2.nextLine();
+
+                    System.out.print("Enter the name of the old publisher: ");
                     String oldPublisher = in2.nextLine();
 
                     String query = "Insert into publishers (publisher_name) values(?)"; 
                     String query2 = "Update books SET publisher_name = ? where publisher_name = ?";
+                    String query3 = "Select * from publishers where publisher_name = ?";
+                    String query4 = "Select * from publishers where publisher_name = ?";
 
+                    PreparedStatement findOld = conn.prepareStatement(query3);
+                    PreparedStatement findNew = conn.prepareStatement(query4);                    
                     PreparedStatement addPublisher = conn.prepareStatement(query);
                     PreparedStatement updatePublisher = conn.prepareStatement(query2);
 
+                    findOld.setString(1, oldPublisher);
+                    findNew.setString(1, newPublisher);
+
+                    ResultSet rs1 = findOld.executeQuery();
+                    ResultSet rs2 = findNew.executeQuery();
+
+                    while (!rs1.next())
+                    {
+                        // While the old publisher doesn't exist have the user
+                        // enter old publishers until one exists
+                        System.out.println("The old publisher you entered does not exist in our database");
+                        System.out.print("Enter the old publisher: ");
+                        oldPublisher = in2.nextLine();
+                        findOld.setString(1, oldPublisher);
+                        rs1 = findOld.executeQuery();
+                    }
+
+                    while(rs2.next()) // if the new publisher already exists
+                    {
+                        System.out.println("The new publisher you enetered already exist ");
+                        System.out.print("Enter the new publisher: ");
+                        newPublisher = in2.nextLine();
+                        findNew.setString(1, newPublisher);
+                        rs2 = findNew.executeQuery();
+                    }
+
+                    // Adds and updates the new publisher
                     addPublisher.setString(1, newPublisher);
                     updatePublisher.setString(1, newPublisher);
                     updatePublisher.setString(2, oldPublisher);
-
                     addPublisher.execute();
                     updatePublisher.execute();
-
                     System.out.println("");
+                    
+                    // Display all new books where publisher is changed
+                    // TRYING TO GET THIS ONE TO WORK - Brandon
+                    stmt = conn.createStatement();
+                    String sql;
+//                    sql =  "SELECT * FROM books";
+//                    sql += "WHERE publisher_name ='" + newPublisher + "'";
+                    
+                    sql = "SELECT * FROM publishers NATURAL JOIN books NATURAL JOIN writing_groups WHERE publisher_name = '" + newPublisher + "'"; 
+                    
+                    rs = stmt.executeQuery(sql);
+                    
+                    if (!rs.next()){
+                        System.out.println("No books found with " + newPublisher);
+                    } else {
+                        System.out.printf(elevendisplay, "Publisher Name", "Group Name", 
+                        "Head Writer", "Year Formed", "Subject", "Book Title", "Year Published", 
+                        "Number Pages", "Publisher Address", "Publisher Phone", "Publisher Email");
+                        do {
+                            String pubname = rs.getString("publisher_name");
+                            String group = rs.getString("group_name");
+                            String head = rs.getString("head_writer");
+                            String year = rs.getString("year_formed");
+                            String subject = rs.getString("subject");
+                            String book_title = rs.getString("book_title");
+                            String year_pub = rs.getString("year_published");
+                            String num_page = rs.getString("number_pages");
+                            String pub_add = rs.getString("publisher_address");
+                            String pub_phone = rs.getString("publisher_phone");
+                            String pub_email = rs.getString("publisher_email");
+                            System.out.printf(elevendisplay,
+                                            dispNull(pubname), dispNull(group), dispNull(head), 
+                                            dispNull(year), dispNull(subject), dispNull(book_title),
+                                            dispNull(year_pub), dispNull(num_page), dispNull(pub_add),
+                                            dispNull(pub_phone), dispNull(pub_email));
+                        } while (rs.next());
+                    }
+                    
+                    //Closes both result sets
+                    rs1.close();
+                    rs2.close();
                 }
-
-                if (userChoice == 9) { // USER REMOVE BOOK
-
-                    System.out.println("Enter the book you want to delete: ");
+                if (userChoice == 9) // USER REMOVE BOOK
+                {
+                    System.out.print("Enter the book you want to delete: ");
                     String bookDelete = in2.nextLine();
 
-                    String query;
-                    query = "delete from books where book_title = ?";
+                    System.out.print("Enter the book's group name: ");
+                    String groupDelete = in2.nextLine();
 
+                    String query = "delete from books where book_title = ? and group_name = ?";
+                    String query1 = "select * from books where book_title = ? and group_name = ?";
+
+                    PreparedStatement findBook = conn.prepareStatement(query1);
                     PreparedStatement deleteBook = conn.prepareStatement(query);
+
+                    findBook.setString(1, bookDelete);
+                    findBook.setString(2, groupDelete);
+
+                    ResultSet rs1 = findBook.executeQuery();
+
+                    while(!rs1.next()) // That book doesn't exist with the info provided
+                    {
+                        System.out.println("The book you are requesting doesn't exist");
+                        System.out.print("Reenter the Book title: ");
+                        bookDelete = in2.nextLine();
+                        System.out.print("Reenter the Book's group name: ");
+                        groupDelete = in2.nextLine();
+                        findBook.setString(1, bookDelete);
+                        findBook.setString(2, groupDelete);
+                        rs1 = findBook.executeQuery();
+                    }
+                    
+                    System.out.println("Deleting " + bookDelete);
+                    
                     deleteBook.setString(1,bookDelete);
+                    deleteBook.setString(2, groupDelete);
                     deleteBook.execute();
+                    rs1.close();
                 }
                 if(userChoice == 10){
                     System.out.println("Quitting...");
