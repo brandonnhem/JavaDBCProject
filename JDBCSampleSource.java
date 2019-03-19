@@ -227,9 +227,9 @@ public class JDBCSampleSource {
                     } 
                 }
                 if(userChoice == 6){
-                    System.out.print("For the book you would to see\nWhat is the title: ");
+                    System.out.println("For the book you would to see\nWhat is the title: ");
                     String bookPicked = in2.nextLine();
-                    System.out.print("What is the name of the writing group: ");
+                    System.out.println("What is the name of the writing group: ");
                     String bookGroup = in2.nextLine();
 
                     PreparedStatement q=conn.prepareStatement("SELECT * FROM books NATURAL "
