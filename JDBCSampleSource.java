@@ -513,7 +513,7 @@ public class JDBCSampleSource {
             }
         } catch (SQLException se) {
             //Handle errors for JDBC
-            se.printStackTrace();
+           System.out.println("No such database exists");
         } catch (Exception e) {
             //Handle errors for Class.forName
             e.printStackTrace();
@@ -530,7 +530,7 @@ public class JDBCSampleSource {
                     conn.close();
                 }
             } catch (SQLException se) {
-                se.printStackTrace();
+                System.out.println("No such database exists");
             }//end finally try
         }//end try
         System.out.println("Goodbye!");
