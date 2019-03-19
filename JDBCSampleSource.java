@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.util.Scanner;
 import java.util.InputMismatchException;
-
 /**
  *
  * @author Mimi Opkins with some tweaking from Dave Brown
