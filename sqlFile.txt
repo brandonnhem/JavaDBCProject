@@ -1,0 +1,54 @@
+CREATE TABLE writing_groups
+    (
+    group_name  varchar(20)    NOT NULL,
+    head_writer varchar(20)            ,
+    year_formed integer                   ,
+    subject     varchar(20)            ,
+    CONSTRAINT  pk_writing_groups PRIMARY KEY(group_name)
+    );
+
+CREATE TABLE books
+    (
+    group_name      varchar(20)    NOT NULL,
+    book_title      varchar(20)    NOT NULL,
+    publisher_name  varchar(20)             ,
+    year_published  integer                   ,
+    number_pages    integer                ,
+    CONSTRAINT  pk_books    PRIMARY KEY(group_name, book_title) 
+    );
+
+CREATE TABLE publishers
+    (
+    publisher_name      varchar(20)    NOT NULL,
+    publisher_address   varchar(20)            ,
+    publisher_phone     varchar(12)            ,
+    publisher_email     varchar(20)            ,
+    CONSTRAINT  pk_publishers    PRIMARY KEY(publisher_name)
+    );
+
+ALTER TABLE books
+            ADD CONSTRAINT books_group_name_fk
+            FOREIGN KEY(group_name)
+            REFERENCES writing_groups(group_name);
+
+ALTER TABLE books
+            ADD CONSTRAINT books_publisher_name_fk
+            FOREIGN KEY(publisher_name)
+            REFERENCES publishers(publisher_name);
+
+
+INSERT INTO writing_groups VALUES('Animal Lovers', 'Steve Irwin', 1985, 'Nonfiction');
+INSERT INTO writing_groups VALUES('Super Suits', 'Peter Parker', 1990, 'Fiction');
+INSERT INTO writing_groups VALUES('Haiku Hackers', 'Naruto Uzumaki', 2008, 'Poetry');
+INSERT INTO publishers VALUES('Ink Inc.', '3245 Artesia Blvd.', '562-835-9037', 'inkinc@gmail.com');
+INSERT INTO publishers VALUES('Cali Caligraphy', '5689 Gardenia Ave.', '562-323-7154', 'cacalig@gmail.com');
+INSERT INTO publishers VALUES('J & J Publishing', '9871 Lakewood Blvd.', '714-628-9010', 'jjpub@gmail.com');
+INSERT INTO books VALUES('Animal Lovers', 'CatDog', 'Ink Inc.', 1998, 680);
+INSERT INTO books VALUES('Animal Lovers', 'El Tigre', 'Cali Caligraphy', 2007, 260);
+INSERT INTO books VALUES('Animal Lovers', 'Doug the Pug', 'J & J Publishing', 2014, 35);
+INSERT INTO books VALUES('Super Suits', 'The Endgame', 'Ink Inc.', 2019, 550 );
+INSERT INTO books VALUES('Super Suits', 'The Dark World', 'Cali Caligraphy', 2001, 95);
+INSERT INTO books VALUES('Super Suits', 'War Zone', 'J & J Publishing', 2005, 205);
+INSERT INTO books VALUES('Haiku Hackers', 'Love Language', 'Ink Inc.', 2019, 23);
+INSERT INTO books VALUES('Haiku Hackers', 'Changes', 'Cali Caligraphy', 2011, 54);
+INSERT INTO books VALUES('Haiku Hackers', 'Miles In Between', 'J & J Publishing', 2015, 87);
